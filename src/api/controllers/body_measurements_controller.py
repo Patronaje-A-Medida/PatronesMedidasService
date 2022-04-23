@@ -15,8 +15,8 @@ async def get_all(service: BodyMeasurementsService = Depends(BodyMeasurementsSer
 @router.post("/compute-measurements")
 async def take_measurements(file: UploadFile = File(...), service: BodyMeasurementsService = Depends(BodyMeasurementsService)):
     try:
-        await service.take_measurements(file)
-        return {"ok": "ok"}
+        res = await service.take_measurements(file)
+        return {"lista": res}
     except ServiceException as ex: 
         return JSONResponse(status_code=400, content={"error_message": ex.error_message},)
 

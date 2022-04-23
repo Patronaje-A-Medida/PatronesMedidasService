@@ -28,5 +28,12 @@ class BodyMeasurementsService():
             if not results.detections:
                 raise ServiceException("No hay personas", 10005)
         
-        #CNN
+        # pre procesamiento 
+
+
+        #prediccion con CNN
+
+        # retornar el output de la CNN    
+        return []
+
                 
