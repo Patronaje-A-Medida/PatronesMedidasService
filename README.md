@@ -3,4 +3,5 @@ Servicios para la toma de medidas corporales y patronaje del sistema de Patronaj
 
 ### ejecución
 pip install -r requeriments.txt
+
 python src/main.py
