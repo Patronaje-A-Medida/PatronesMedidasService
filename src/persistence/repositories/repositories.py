@@ -1,5 +1,7 @@
 from fastapi import Depends
+from numpy import true_divide
 from persistence.context.dbcontext import DbContext
+from domain.entities.entities import BodyMeasurements
 
 
 class BodyMeasurementsRepository():
@@ -13,9 +15,17 @@ class BodyMeasurementsRepository():
             docs.append(self.json_helper(doc))
         return docs
 
+    async def insert(self, entity: BodyMeasurements) -> bool:
+        result = await self.context.body_measurements_collection.insert_one(entity.to_json())
+        if result is not None:
+            return True
+        else:
+            return False
+
     def json_helper(self, doc) -> dict:
         return {
             "_id": str(doc["_id"]),
             "client_id": doc["client_id"],
             "measurement_date": doc["measurement_date"],
+            "measurements": doc["measurements"]
         }
