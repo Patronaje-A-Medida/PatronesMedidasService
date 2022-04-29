@@ -12,13 +12,15 @@ async def get_all(service: BodyMeasurementsService = Depends(BodyMeasurementsSer
     return {"docs": docs}
 
 
-@router.post("/compute-measurements")
-async def take_measurements(file: UploadFile = File(...) ,file2: UploadFile = File(...) ,height: float= Form(...) ,
- service: BodyMeasurementsService = Depends(BodyMeasurementsService)):
+@router.post("/compute-measurements/{client_id}")
+async def take_measurements(
+        client_id: int,
+        file_frontal: UploadFile = File(...),
+        file_lateral: UploadFile = File(...),
+        height: float = Form(...),
+        service: BodyMeasurementsService = Depends(BodyMeasurementsService)):
     try:
-        res = await service.take_measurements(file,file2,height)
-        list(res)
+        res = await service.take_measurements(file_frontal, file_lateral, height, client_id)
         return {f'lista: {res}'}
-    except ServiceException as ex: 
+    except ServiceException as ex:
         return JSONResponse(status_code=400, content={"error_message": ex.error_message},)
-
