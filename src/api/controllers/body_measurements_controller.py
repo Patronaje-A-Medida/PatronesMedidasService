@@ -18,9 +18,9 @@ async def take_measurements(
         file_frontal: UploadFile = File(...),
         file_lateral: UploadFile = File(...),
         height: float = Form(...),
-        service: BodyMeasurementsService = Depends(BodyMeasurementsService)):
+        service: BodyMeasurementsService = Depends(BodyMeasurementsService)) -> dict:
     try:
         res = await service.take_measurements(file_frontal, file_lateral, height, client_id)
-        return {f'lista: {res}'}
+        return res.to_map()
     except ServiceException as ex:
         return JSONResponse(status_code=400, content={"error_message": ex.error_message},)
