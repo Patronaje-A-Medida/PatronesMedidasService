@@ -1,19 +1,8 @@
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 from pydantic import BaseModel, Field
 from datetime import datetime
 
-class BodyMeasurements(BaseModel):
-    client_id: int = Field(...)
-    measurement_date: datetime = Field(...)
-    measurements: list = Field(...)
-
-    def to_json(self) -> dict:
-        return {
-            "client_id": self.client_id,
-            "measurement_date": self.measurement_date,
-            "measurements": [x.to_json() for x in self.measurements]
-        }
 
 class Measurement(BaseModel):
     name_measurement: str = Field(...)
@@ -29,3 +18,14 @@ class Measurement(BaseModel):
             "units": self.units
         }
     
+class BodyMeasurements(BaseModel):
+    client_id: int = Field(...)
+    measurement_date: datetime = Field(...)
+    measurements: List[Measurement] = Field(...)
+
+    def to_json(self) -> dict:
+        return {
+            "client_id": self.client_id,
+            "measurement_date": self.measurement_date,
+            "measurements": [x.to_json() for x in self.measurements]
+        }
