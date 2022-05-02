@@ -15,3 +15,12 @@ class Measurement(BaseModel):
             "acronym": self.acronym,
             "units": self.units
         }
+
+    @classmethod
+    def from_map(self, doc: dict) -> BaseModel:
+        return Measurement(
+            name_measurement=doc["name_measurement"],
+            value=doc["value"],
+            acronym=doc["acronym"],
+            units=doc["units"]
+        )

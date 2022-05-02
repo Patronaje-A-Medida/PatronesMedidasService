@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import List
 import numpy as np
 import cv2
 import mediapipe as mp
@@ -31,6 +32,11 @@ class BodyMeasurementsService():
         result = await self.repository.get_all()
         return result
 
+    async def get_last_measurements(self, client_id: int) -> BodyMeasurementsRead:
+        result = await self.repository.get_last_measurements(client_id)
+        result_read = self.mapper.map_to_body_measurements_read(result)
+        return result_read
+    
     async def take_measurements(
             self,
             image_frontal_file: UploadFile,
@@ -113,11 +119,12 @@ class BodyMeasurementsService():
                 Measurement(name_measurement='contorno de pantorrilla',
                             value=arr_measurements[12], acronym='c_p_ll', units='cm'),
                 Measurement(name_measurement='contorno de rodilla',
-                            value=arr_measurements[11], acronym='c_r', units='cm'),
+                            value=arr_measurements[11], acronym='c_r', units='cm')
             ]
         )
 
         inserted_id = await self.repository.insert(entity)
+        entity.id = inserted_id
 
-        model = self.mapper.map_to_body_measurements_read(inserted_id, entity)
+        model = self.mapper.map_to_body_measurements_read(entity)
         return model

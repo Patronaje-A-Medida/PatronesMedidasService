@@ -1,3 +1,4 @@
+from typing import List
 from fastapi import Depends
 from numpy import true_divide
 from persistence.context.dbcontext import DbContext
@@ -12,7 +13,7 @@ class BodyMeasurementsRepository():
         docs = []
         cursor = self.context.body_measurements_collection.find({})
         for doc in await cursor.to_list(length=100):
-            docs.append(self.doc_helper(doc))
+            docs.append(BodyMeasurements.from_map(doc))
         return docs
 
     async def insert(self, entity: BodyMeasurements) -> str:
@@ -21,6 +22,14 @@ class BodyMeasurementsRepository():
             return result.inserted_id
         else:
             return None
+
+    async def get_last_measurements(self, client_id) -> BodyMeasurements:
+        docs = []
+        cursor = self.context.body_measurements_collection.find({'client_id': {'$eq':client_id}})
+        for doc in await cursor.to_list(length=100):
+            docs.append(BodyMeasurements.from_map(doc))
+        docs.sort(key=lambda x: x.measurement_date, reverse=True)
+        return docs[0]
 
     def doc_helper(self, doc) -> dict:
         return {

@@ -8,10 +8,9 @@ class Mapper():
 
     def map_to_body_measurements_read(
             self,
-            id: str,
             entity: BodyMeasurements) -> BodyMeasurementsRead:
         model = BodyMeasurementsRead(
-            id=str(id), 
+            id=str(entity.id),
             client_id=entity.client_id, 
             measurement_date=entity.measurement_date, 
             measurements=entity.measurements

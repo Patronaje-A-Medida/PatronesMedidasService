@@ -20,7 +20,16 @@ async def take_measurements(
         height: float = Form(...),
         service: BodyMeasurementsService = Depends(BodyMeasurementsService)) -> dict:
     try:
-        res = await service.take_measurements(file_frontal, file_lateral, height, client_id)
-        return res.to_map()
+        result = await service.take_measurements(file_frontal, file_lateral, height, client_id)
+        return result.to_map()
+    except ServiceException as ex:
+        return JSONResponse(status_code=400, content={"error_message": ex.error_message},)
+
+@router.get("/last-measurements/{client_id}")
+async def last_measurements(client_id: int, service: BodyMeasurementsService = Depends(BodyMeasurementsService)) -> dict:
+    try:
+        result = await service.get_last_measurements(client_id)
+        return result.to_map()
+        
     except ServiceException as ex:
         return JSONResponse(status_code=400, content={"error_message": ex.error_message},)
