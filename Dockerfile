@@ -1,6 +1,6 @@
 FROM python:3.7.13-slim
 
-COPY .src/ /app/src
+COPY ./src /app/src
 COPY ./requeriments.txt /app
 
 WORKDIR /app
