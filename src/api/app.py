@@ -8,7 +8,7 @@ app = FastAPI(title="API PATRONES Y MEDIDAS")
 
 #app.include_router(TrainingRouter, tags=["Training"], prefix="/training")
 #app.include_router(PredictRouter, tags=["Predict"], prefix="/predict")
-app.include_router(BodyMeasurementsRouter, tags=["Body Measurements"], prefix="/body-measurements")
+app.include_router(BodyMeasurementsRouter, tags=["Body Measurements"], prefix="/api/body-measurements")
 
 app.add_middleware(
     CORSMiddleware,

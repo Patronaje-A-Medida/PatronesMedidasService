@@ -12,7 +12,7 @@ class BodyMeasurementsRepository():
         docs = []
         cursor = self.context.body_measurements_collection.find({})
         for doc in await cursor.to_list(length=100):
-            docs.append(self.json_helper(doc))
+            docs.append(self.doc_helper(doc))
         return docs
 
     async def insert(self, entity: BodyMeasurements) -> str:
@@ -22,7 +22,7 @@ class BodyMeasurementsRepository():
         else:
             return None
 
-    def json_helper(self, doc) -> dict:
+    def doc_helper(self, doc) -> dict:
         return {
             "_id": str(doc["_id"]),
             "client_id": doc["client_id"],
