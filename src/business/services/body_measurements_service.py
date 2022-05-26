@@ -1,4 +1,5 @@
 from datetime import datetime
+from re import U
 from typing import List
 import numpy as np
 import cv2
@@ -34,9 +35,10 @@ class BodyMeasurementsService():
 
     async def get_last_measurements(self, client_id: int) -> BodyMeasurementsRead:
         result = await self.repository.get_last_measurements(client_id)
+        if result is None: return None
         result_read = self.mapper.map_to_body_measurements_read(result)
         return result_read
-    
+
     async def take_measurements(
             self,
             image_frontal_file: UploadFile,
@@ -51,14 +53,12 @@ class BodyMeasurementsService():
         bytes_as_np_array_2 = np.frombuffer(content_lateral, dtype=np.uint8)
         image_lateral = cv2.imdecode(bytes_as_np_array_2, cv2.IMREAD_COLOR)
 
-        """with  mp_face_detection.FaceDetection(model_selection=1, min_detection_confidence=0.5) as face_detection:
-            results = face_detection.process(cv2.cvtColor(image_1, cv2.COLOR_BGR2RGB))
-            if not results.detections:
-                raise ServiceException("No hay personas", 10005)
-
-        
-
         with  mp_face_detection.FaceDetection(model_selection=1, min_detection_confidence=0.5) as face_detection:
+            results = face_detection.process(cv2.cvtColor(image_frontal, cv2.COLOR_BGR2RGB))
+            if not results.detections:
+                raise ServiceException("Las imágenes tomadas no pertenecen a una persona", 10020)
+
+        """with  mp_face_detection.FaceDetection(model_selection=1, min_detection_confidence=0.5) as face_detection:
             results = face_detection.process(cv2.cvtColor(image_2, cv2.COLOR_BGR2RGB))
             if not results.detections:
                 raise ServiceException("No hay personas", 10005)"""
@@ -119,7 +119,9 @@ class BodyMeasurementsService():
                 Measurement(name_measurement='contorno de pantorrilla',
                             value=arr_measurements[12], acronym='c_p_ll', units='cm'),
                 Measurement(name_measurement='contorno de rodilla',
-                            value=arr_measurements[11], acronym='c_r', units='cm')
+                            value=arr_measurements[11], acronym='c_r', units='cm'),
+                Measurement(name_measurement='largo de cadera',
+                            value=arr_measurements[3] - arr_measurements[6], acronym='l_c', units='cm')
             ]
         )
 

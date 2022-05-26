@@ -26,8 +26,12 @@ class BodyMeasurementsRepository():
     async def get_last_measurements(self, client_id) -> BodyMeasurements:
         docs = []
         cursor = self.context.body_measurements_collection.find({'client_id': {'$eq':client_id}})
+        
         for doc in await cursor.to_list(length=100):
             docs.append(BodyMeasurements.from_map(doc))
+        
+        if len(docs) < 1: return None
+        
         docs.sort(key=lambda x: x.measurement_date, reverse=True)
         return docs[0]
 

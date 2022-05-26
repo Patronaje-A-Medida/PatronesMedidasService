@@ -21,15 +21,16 @@ async def take_measurements(
         service: BodyMeasurementsService = Depends(BodyMeasurementsService)) -> dict:
     try:
         result = await service.take_measurements(file_frontal, file_lateral, height, client_id)
-        return result.to_map()
+        return JSONResponse(status_code=200, content=result.to_map())
     except ServiceException as ex:
-        return JSONResponse(status_code=400, content={"error_message": ex.error_message},)
+        return JSONResponse(status_code=500, content={"statusCode": 500, "errorCode": ex.error_code, "message": ex.error_message})
 
 @router.get("/last-measurements/{client_id}")
 async def last_measurements(client_id: int, service: BodyMeasurementsService = Depends(BodyMeasurementsService)) -> dict:
     try:
         result = await service.get_last_measurements(client_id)
-        return result.to_map()
-        
+        if result is None:
+            return JSONResponse(status_code=404, content={"statusCode": 404, "errorCode": 10010, "message": "El usuario no cuenta con medidas corporales tomadas"})
+        return JSONResponse(status_code=200, content=result.to_map())
     except ServiceException as ex:
-        return JSONResponse(status_code=400, content={"error_message": ex.error_message},)
+        return JSONResponse(status_code=400, content={"statusCode": 500, "errorCode": ex.error_code, "message": ex.error_message})

@@ -16,7 +16,7 @@ class BodyMeasurementsRead(BaseModel):
         return {
             "id": self.id,
             "client_id": self.client_id,
-            "measurement_date": self.measurement_date,
+            "measurement_date": str(self.measurement_date.isoformat()),
             "measurements": [x.to_map() for x in self.measurements]
         }
     
