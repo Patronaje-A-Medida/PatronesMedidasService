@@ -106,6 +106,6 @@ class BodyMeasurementsService():
         entity.id = inserted_id
 
         model = self.mapper.map_to_body_measurements_read(entity)
-        image_frontal_file.close()
+        await image_frontal_file.close()
         return model
   

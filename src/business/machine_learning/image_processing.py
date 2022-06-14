@@ -23,4 +23,5 @@ def process_body_person(image) -> any:
         image_no_bg = np.where(condition, image_no_bg, bg_image)
         image_no_bg[image_no_bg!=0]=255
         image_no_bg = cv2.cvtColor(image_no_bg, cv2.COLOR_RGB2GRAY)
+        image_no_bg = cv2.resize(image_no_bg, (480,200), interpolation=cv2.INTER_AREA)
         return image_no_bg
