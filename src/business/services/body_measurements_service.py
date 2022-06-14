@@ -35,7 +35,8 @@ class BodyMeasurementsService():
 
     async def get_last_measurements(self, client_id: int) -> BodyMeasurementsRead:
         result = await self.repository.get_last_measurements(client_id)
-        if result is None: return None
+        if result is None:
+            return None
         result_read = self.mapper.map_to_body_measurements_read(result)
         return result_read
 
@@ -49,79 +50,53 @@ class BodyMeasurementsService():
         bytes_as_np_array_1 = np.frombuffer(content_frontal, dtype=np.uint8)
         image_frontal = cv2.imdecode(bytes_as_np_array_1, cv2.IMREAD_COLOR)
 
-        content_lateral = await image_lateral_file.read()
+        """content_lateral = await image_lateral_file.read()
         bytes_as_np_array_2 = np.frombuffer(content_lateral, dtype=np.uint8)
-        image_lateral = cv2.imdecode(bytes_as_np_array_2, cv2.IMREAD_COLOR)
+        image_lateral = cv2.imdecode(bytes_as_np_array_2, cv2.IMREAD_COLOR)"""
 
-        with  mp_face_detection.FaceDetection(model_selection=1, min_detection_confidence=0.5) as face_detection:
-            results = face_detection.process(cv2.cvtColor(image_frontal, cv2.COLOR_BGR2RGB))
+        with mp_face_detection.FaceDetection(model_selection=1, min_detection_confidence=0.5) as face_detection:
+            results = face_detection.process(
+                cv2.cvtColor(image_frontal, cv2.COLOR_BGR2RGB))
             if not results.detections:
-                raise ServiceException("Las imágenes tomadas no pertenecen a una persona", 10020)
+                raise ServiceException(
+                    "Las imágenes tomadas no pertenecen a una persona", 10020)
 
         """with  mp_face_detection.FaceDetection(model_selection=1, min_detection_confidence=0.5) as face_detection:
             results = face_detection.process(cv2.cvtColor(image_2, cv2.COLOR_BGR2RGB))
             if not results.detections:
                 raise ServiceException("No hay personas", 10005)"""
 
-        arr_measurements = self.predictive_model.predict(
-            image_frontal, image_lateral, height)
+        dict_measurements = self.predictive_model.predict(image_frontal)
 
         entity = BodyMeasurements(
             client_id=client_id,
             measurement_date=datetime.now(),
             measurements=[
-                Measurement(name_measurement='altura',
-                            value=height, acronym='im', units='cm'),
-                Measurement(name_measurement='contorno de pecho',
-                            value=arr_measurements[9], acronym='c_p', units='cm'),
-                Measurement(name_measurement='contorno de cintura',
-                            value=arr_measurements[1], acronym='t_w_c', units='cm'),
-                Measurement(name_measurement='contorno de cintura natural',
-                            value=arr_measurements[22], acronym='c_c_n', units='cm'),
-                Measurement(name_measurement='contorno de cadera alta',
-                            value=arr_measurements[2], acronym='c_c_a', units='cm'),
-                Measurement(name_measurement='contorno de cadera baja',
-                            value=arr_measurements[23], acronym='c_c_b', units='cm'),
-                Measurement(name_measurement='alto de talle de espalda', value=(
-                    arr_measurements[18] - arr_measurements[3]), acronym='a_t_e', units='cm'),
-                Measurement(name_measurement='alto de talle delantero', value=(
-                    arr_measurements[18] - arr_measurements[21]), acronym='a_t_t', units='cm'),
-                Measurement(name_measurement='alto de pecho',
-                            value=arr_measurements[17], acronym='a_p', units='cm'),
-                Measurement(name_measurement='alto de caderas alta',
-                            value=arr_measurements[6], acronym='a_c_a', units='cm'),
-                Measurement(name_measurement='alto de caderas baja',
-                            value=arr_measurements[24], acronym='a_c_b', units='cm'),
-                Measurement(name_measurement='separacion del pecho',
-                            value=arr_measurements[8], acronym='s_p', units='cm'),
-                Measurement(name_measurement='ancho de espalda',
-                            value=arr_measurements[10], acronym='a_a', units='cm'),
-                Measurement(name_measurement='ancho de busto',
-                            value=arr_measurements[20], acronym='a_b', units='cm'),
-                Measurement(name_measurement='contorno del cuello',
-                            value=arr_measurements[7], acronym='c_c', units='cm'),
-                Measurement(name_measurement='ancho de hombro',
-                            value=arr_measurements[7], acronym='c_c', units='cm'),
-                Measurement(name_measurement='largo de brazo',
-                            value=arr_measurements[15], acronym='l_b', units='cm'),
-                Measurement(name_measurement='contorno de brazo',
-                            value=arr_measurements[13], acronym='c_b', units='cm'),
-                Measurement(name_measurement='contorno de muñeca',
-                            value=arr_measurements[14], acronym='c_m', units='cm'),
-                Measurement(name_measurement='tiro al suelo',
-                            value=arr_measurements[0], acronym='t_s', units='cm'),
-                Measurement(name_measurement='entrepierna delantera',
-                            value=arr_measurements[5], acronym='e_p_d', units='cm'),
-                Measurement(name_measurement='entrepierna trasera',
-                            value=arr_measurements[4], acronym='e_p_t', units='cm'),
-                Measurement(name_measurement='ancho de muslo',
-                            value=arr_measurements[19], acronym='a_m', units='cm'),
-                Measurement(name_measurement='contorno de pantorrilla',
-                            value=arr_measurements[12], acronym='c_p_ll', units='cm'),
-                Measurement(name_measurement='contorno de rodilla',
-                            value=arr_measurements[11], acronym='c_r', units='cm'),
-                Measurement(name_measurement='largo de cadera',
-                            value=arr_measurements[3] - arr_measurements[6], acronym='l_c', units='cm')
+                Measurement(name_measurement='altura', value=height, acronym='H', units='cm'),
+                Measurement(name_measurement='contorno de pecho', value=dict_measurements['Bust_Circ'], acronym='Bc', units='cm'),
+                Measurement(name_measurement='contorno de cintura', value=dict_measurements['TrouserWAIST_Circ'], acronym='Wc', units='cm'),
+                Measurement(name_measurement='contorno de cintura natural', value=dict_measurements['NaturalWAIST_Circ'], acronym='NWc', units='cm'),
+                Measurement(name_measurement='contorno de cadera alta', value=dict_measurements['HIP_Circ'], acronym='Hc', units='cm'),
+                Measurement(name_measurement='contorno de cadera baja', value=dict_measurements['Hip_2_Circ'], acronym='Hc2', units='cm'),
+                Measurement(name_measurement='alto de talle de espalda', value=dict_measurements['NECK_Height'] - dict_measurements['TrouserWaist_Height_Back'], acronym='SWb', units='cm'),
+                Measurement(name_measurement='alto de talle delantero', value=dict_measurements['NECK_Height'] - dict_measurements['TrouserWaist_Height_Front'], acronym='SWf', units='cm'),
+                Measurement(name_measurement='alto de pecho', value=dict_measurements['SideNeck_to_Bust'], acronym='Bh', units='cm'),
+                Measurement(name_measurement='alto de cadera alta', value=dict_measurements['Hip_Height'], acronym='Hh', units='cm'),
+                Measurement(name_measurement='alto de cadera baja', value=dict_measurements['Hip_2_Height'], acronym='Hh2', units='cm'),
+                Measurement(name_measurement='separación del pecho', value=dict_measurements['Bust_to_Bust'], acronym='BB', units='cm'),
+                Measurement(name_measurement='ancho de espalda', value=dict_measurements['Across_Back'], acronym='bw', units='cm'),
+                Measurement(name_measurement='ancho de busto', value=dict_measurements['Across_Front'], acronym='fw', units='cm'),
+                Measurement(name_measurement='contorno del cuello', value=dict_measurements['NeckBase_Circ'], acronym='Nc', units='cm'),
+                Measurement(name_measurement='ancho de hombro', value=dict_measurements['Shoulder_Length'], acronym='Sh', units='cm'),
+                Measurement(name_measurement='largo de brazo', value=dict_measurements['Shoulder_to_Wrist'], acronym='Al', units='cm'),
+                Measurement(name_measurement='contorno de brazo', value=dict_measurements['Bicep_Circ'], acronym='Ac', units='cm'),
+                Measurement(name_measurement='contorno de muñeca', value=dict_measurements['Wrist_Circ'], acronym='Wrc', units='cm'),
+                Measurement(name_measurement='tiro al suelo', value=dict_measurements['Inseam'], acronym='Is', units='cm'),
+                Measurement(name_measurement='entrepierna delantera', value=dict_measurements['CrotchLength_Front'], acronym='Crf', units='cm'),
+                Measurement(name_measurement='entrepierna trasera', value=dict_measurements['CrotchLength_Back'], acronym='Crb', units='cm'),
+                Measurement(name_measurement='contorno de muslo', value=dict_measurements['Thigh_Circ'], acronym='Tc', units='cm'),
+                Measurement(name_measurement='contorno de pantorrilla', value=dict_measurements['Calf_Circ'], acronym='Cfc', units='cm'),
+                Measurement(name_measurement='contorno de rodilla', value=dict_measurements['Knee_Circ'], acronym='Kc', units='cm'),
             ]
         )
 

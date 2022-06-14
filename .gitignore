@@ -134,3 +134,4 @@ dmypy.json
 *.code-workspace
 
 *.h5
+*.tflite
