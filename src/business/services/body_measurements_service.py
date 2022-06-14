@@ -50,6 +50,8 @@ class BodyMeasurementsService():
         bytes_as_np_array_1 = np.frombuffer(content_frontal, dtype=np.uint8)
         image_frontal = cv2.imdecode(bytes_as_np_array_1, cv2.IMREAD_COLOR)
 
+        cv2.imwrite('./src/business/tmp/'+image_frontal_file.filename, image_frontal)
+
         """content_lateral = await image_lateral_file.read()
         bytes_as_np_array_2 = np.frombuffer(content_lateral, dtype=np.uint8)
         image_lateral = cv2.imdecode(bytes_as_np_array_2, cv2.IMREAD_COLOR)"""
@@ -104,4 +106,6 @@ class BodyMeasurementsService():
         entity.id = inserted_id
 
         model = self.mapper.map_to_body_measurements_read(entity)
+        image_frontal_file.close()
         return model
+  

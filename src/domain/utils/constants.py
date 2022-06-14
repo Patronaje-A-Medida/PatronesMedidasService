@@ -30,6 +30,19 @@ LITE_MODELS = [
     BASE_FILENAME_DIR + 'Wrist_Circ.tflite'
 ]
 
+
+FIREBASE_CONFIG = {
+    "apiKey": "AIzaSyD6rwCtpBQrIVLah_BFVjGjt6W4XUwYfPw",
+    "authDomain": "pry2021251-pam.firebaseapp.com",
+    "databaseURL": "",
+    "projectId": "pry2021251-pam",
+    "storageBucket": "pry2021251-pam.appspot.com",
+    "messagingSenderId": "101974237012",
+    "appId": "1:101974237012:web:38e2c349736ecf2fbe32c1"
+}
+
+ADM_CREDENTIALS = ('u201716506@upc.edu.pe', 'cocobicho1413')
+
 class MeasuresEnum(Enum):
     Across_Back = 1
     Across_Front = 2

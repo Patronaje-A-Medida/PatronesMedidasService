@@ -2,19 +2,13 @@ from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
 from fastapi.responses import JSONResponse
 from business.services.body_measurements_service import BodyMeasurementsService
 from business.handlers.service_exception import ServiceException
+from domain.utils.constants import FIREBASE_CONFIG, ADM_CREDENTIALS
 import pyrebase
+import os
 
-config = {
-    "apiKey": "AIzaSyD6rwCtpBQrIVLah_BFVjGjt6W4XUwYfPw",
-    "authDomain": "pry2021251-pam.firebaseapp.com",
-    "databaseURL": "",
-    "projectId": "pry2021251-pam",
-    "storageBucket": "pry2021251-pam.appspot.com",
-    "messagingSenderId": "101974237012",
-    "appId": "1:101974237012:web:38e2c349736ecf2fbe32c1"
-}
 
-firebase = pyrebase.initialize_app(config)
+
+firebase = pyrebase.initialize_app(FIREBASE_CONFIG)
 storage = firebase.storage()
 auth = firebase.auth()
 router = APIRouter()
@@ -34,12 +28,13 @@ async def take_measurements(
         height: float = Form(...),
         service: BodyMeasurementsService = Depends(BodyMeasurementsService)) -> dict:
     try:
-        #result = await service.take_measurements(file_frontal, file_lateral, height, client_id)
-        #return JSONResponse(status_code=200, content=result.to_map())
-        user = auth.sign_in_with_email_and_password('u201716506@upc.edu.pe', 'cocobicho1413')
-        storage.child('data/'+file_frontal.filename).put(file_frontal.file, user['idToken'])
-        storage.child('data/'+file_lateral.filename).put(file_lateral.file, user['idToken'])
-        return JSONResponse(status_code=200, content={'ok':'ok'})
+        user = auth.sign_in_with_email_and_password(ADM_CREDENTIALS[0], ADM_CREDENTIALS[1])
+        result = await service.take_measurements(file_frontal, file_lateral, height, client_id)
+        await upload_temp_files(file_frontal.filename, user['idToken'])
+        await upload_temp_files(file_lateral, user['idToken'])
+        #await storage.child('data/'+file_lateral.filename).put(file_lateral.file, user['idToken'])
+        os.remove('./src/business/tmp/'+file_frontal.filename)
+        return JSONResponse(status_code=200, content=result.to_map())
     except ServiceException as ex:
         return JSONResponse(status_code=500, content={"statusCode": 500, "errorCode": ex.error_code, "message": ex.error_message})
 
@@ -52,3 +47,10 @@ async def last_measurements(client_id: int, service: BodyMeasurementsService = D
         return JSONResponse(status_code=200, content=result.to_map())
     except ServiceException as ex:
         return JSONResponse(status_code=400, content={"statusCode": 500, "errorCode": ex.error_code, "message": ex.error_message})
+
+async def upload_temp_files(file: any, token: any): 
+    if isinstance(file, str):
+        storage.child('data/'+file).put('./src/business/tmp/'+file, token)
+    else:
+        storage.child('data/'+file.filename).put(file.file, token)
+    
