@@ -83,8 +83,8 @@ class BodyMeasurementsService():
                 Measurement(name_measurement='alto de talle de espalda', value=dict_measurements['NECK_Height'] - dict_measurements['TrouserWaist_Height_Back'], acronym='SWb', units='cm'),
                 Measurement(name_measurement='alto de talle delantero', value=dict_measurements['NECK_Height'] - dict_measurements['TrouserWaist_Height_Front'], acronym='SWf', units='cm'),
                 Measurement(name_measurement='alto de pecho', value=dict_measurements['SideNeck_to_Bust'], acronym='Bh', units='cm'),
-                Measurement(name_measurement='alto de cadera alta', value=dict_measurements['Hip_Height'], acronym='Hh', units='cm'),
-                Measurement(name_measurement='alto de cadera baja', value=dict_measurements['Hip_2_Height'], acronym='Hh2', units='cm'),
+                Measurement(name_measurement='alto de cadera alta al piso', value=dict_measurements['Hip_Height'], acronym='Hh', units='cm'),
+                Measurement(name_measurement='alto de cadera baja al piso', value=dict_measurements['Hip_2_Height'], acronym='Hh2', units='cm'),
                 Measurement(name_measurement='separación del pecho', value=dict_measurements['Bust_to_Bust'], acronym='BB', units='cm'),
                 Measurement(name_measurement='ancho de espalda', value=dict_measurements['Across_Back'], acronym='bw', units='cm'),
                 Measurement(name_measurement='ancho de busto', value=dict_measurements['Across_Front'], acronym='fw', units='cm'),
@@ -99,7 +99,10 @@ class BodyMeasurementsService():
                 Measurement(name_measurement='contorno de muslo', value=dict_measurements['Thigh_Circ'], acronym='Tc', units='cm'),
                 Measurement(name_measurement='contorno de pantorrilla', value=dict_measurements['Calf_Circ'], acronym='Cfc', units='cm'),
                 Measurement(name_measurement='contorno de rodilla', value=dict_measurements['Knee_Circ'], acronym='Kc', units='cm'),
-                Measurement(name_measurement='contorno de cadera superior', value=dict_measurements['TopHip_Circ'], acronym='Kc', units='cm'),
+                Measurement(name_measurement='contorno de cadera superior', value=dict_measurements['TopHip_Circ'], acronym='THc', units='cm'),
+                Measurement(name_measurement='alto de cadera', value=dict_measurements['TrouserWaist_Height_Front'] - dict_measurements['Hip_Height'], acronym='HH', units='cm'),
+                Measurement(name_measurement='alto de cintura frontal', value=dict_measurements['TrouserWaist_Height_Front'], acronym='HWf', units='cm'),
+                Measurement(name_measurement='alto de cintura espalda', value=dict_measurements['TrouserWaist_Height_Back'], acronym='HWf', units='cm'),
             ]
         )
 
