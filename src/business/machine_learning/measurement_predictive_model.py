@@ -30,7 +30,8 @@ LITE_MODELS = [
     'TrouserWAIST_Circ.tflite',
     'TrouserWaist_Height_Back.tflite',
     'TrouserWaist_Height_Front.tflite',
-    'Wrist_Circ.tflite'
+    'Wrist_Circ.tflite',
+    'TopHip_Circ.tflite'
 ]
 
 

@@ -69,7 +69,7 @@ class BodyMeasurementsService():
                 raise ServiceException("No hay personas", 10005)"""
 
         dict_measurements = self.predictive_model.predict(image_frontal)
-
+        
         entity = BodyMeasurements(
             client_id=client_id,
             measurement_date=datetime.now(),
@@ -99,6 +99,7 @@ class BodyMeasurementsService():
                 Measurement(name_measurement='contorno de muslo', value=dict_measurements['Thigh_Circ'], acronym='Tc', units='cm'),
                 Measurement(name_measurement='contorno de pantorrilla', value=dict_measurements['Calf_Circ'], acronym='Cfc', units='cm'),
                 Measurement(name_measurement='contorno de rodilla', value=dict_measurements['Knee_Circ'], acronym='Kc', units='cm'),
+                Measurement(name_measurement='contorno de cadera superior', value=dict_measurements['TopHip_Circ'], acronym='Kc', units='cm'),
             ]
         )
 
