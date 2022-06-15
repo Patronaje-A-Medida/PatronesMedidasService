@@ -100,7 +100,7 @@ class BodyMeasurementsService():
                 Measurement(name_measurement='contorno de pantorrilla', value=dict_measurements['Calf_Circ'], acronym='Cfc', units='cm'),
                 Measurement(name_measurement='contorno de rodilla', value=dict_measurements['Knee_Circ'], acronym='Kc', units='cm'),
                 Measurement(name_measurement='contorno de cadera superior', value=dict_measurements['TopHip_Circ'], acronym='THc', units='cm'),
-                Measurement(name_measurement='alto de cadera', value=dict_measurements['TrouserWaist_Height_Front'] - dict_measurements['Hip_Height'], acronym='HH', units='cm'),
+                Measurement(name_measurement='alto de cadera', value=dict_measurements['TrouserWaist_Height_Front'] - max(dict_measurements['Hip_Height'],dict_measurements['Hip_2_Height']), acronym='HH', units='cm'),
                 Measurement(name_measurement='alto de cintura frontal', value=dict_measurements['TrouserWaist_Height_Front'], acronym='HWf', units='cm'),
                 Measurement(name_measurement='alto de cintura espalda', value=dict_measurements['TrouserWaist_Height_Back'], acronym='HWf', units='cm'),
             ]
